@@ -1,0 +1,24 @@
+@page "/enquetes"
+
+<PageTitle>Enquetes - @tqnName</PageTitle>
+<h3>Enquetes</h3>
+<div id="center" style="align-self:center;" hidden="@hideSetEnquetes"> 
+    <button hidden="@hideSetEnquetes" onclick="@setEnquete">Set</button>
+</div>
+@foreach (token in ListTokens)
+{
+<div id="tqnshared" hidden="@token.ShowSetEnquetes">
+    <div id="title">@token.TokenName</div>
+    <div id="description">@token.Description</div>
+</div>
+<div id="tqndisp-one" hidden="@ifTokenOne">
+        <TokenOne></TokenOne>
+</div>
+<div>
+    <button onclick="@showSelector">Back</button>
+</div>
+}
+
+@code {
+
+}
