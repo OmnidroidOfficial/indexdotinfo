@@ -10,7 +10,13 @@ namespace indexdotinfo
         public static int? MessagesSent { get; set; }
         public static int? MessagesReceived { get; set; }
         public static string? Pending { get; set; }
+        public static bool? Affirmative { get; set; } = false;
+        public static string? Scenario { get; set; }
+        public static string? ForInterpretation { get; set; }
         public static int OutputModule { get; set; } = 0;
+        public static List<Line> LinesToRead { get; set; } = new List<Line>() { };
+        public static string? ToInterpret { get; set; }
+        public static Array? Trigger { get; set; }
         public static bool? StateOne { get; set; } = false;
         public static bool? StateTwo { get; set; } = false;
         public static bool? StateThree { get; set; } = false;
@@ -25,53 +31,49 @@ namespace indexdotinfo
         // moment in structure of interpretation (accuracy)
         // report 
 
+        public class Line
+        {
+            public Line(string aLine)
+            {
+                AsLine = aLine;
+            }
+            public string? AsLine { get; set; }
+        }
+
         static public void NewInterpreter()
         {
             Reading.ReadIndex = 0;
-            Reading.CountMessagesToRead = 0;
             ChtCountSuggestions = 0;
             // empty chat log (review)
         }
         static public void NewInterpretation()
         {
-            if (Reading.BookmarkIndex == 0)
+            if (Reading.ReadIndex == 0)
             {
                 Reading.ChtState = 1;
                 Chat.MsgIncomingTxt = "Introductory approach.";
                 Chat.NewMessage();
                 Reading.ChtApproach = "Introductory";
             }
-                Reading.NewReading();
-            
+            Pending = "The Administrator awaits your response.";
+            Chat.CountMessages();
+            Chat.MessagesIncoming = false;
+            Reading.NewReading();
         }
 
         static public void InterpretMessage()
         {
-            if (OutputModule == 0)
+            Chat.ReadMessage();
+            foreach (var ToRead in Reading.MessagesToRead!)
             {
-                Reading.ModuleZero();
+                ForInterpretation = ToRead.msgContent;
+                LinesToRead.Add(new Line(ForInterpretation));
             }
-            else if (Interpreter.OutputModule == 1)
-            {
-                Reading.ModuleOne();
-            }
-            else if (Interpreter.OutputModule == 2)
-            {
-                Reading.ModuleTwo();
-            }
-            else if (Interpreter.OutputModule == 3)
-            {
-                Reading.ModuleThree();
-            }
-            else if (Interpreter.OutputModule == 4)
-            {
-                Reading.ModuleFour();
-            }
-            else if (Interpreter.OutputModule == 5)
-            {
-                Reading.ModuleFive();
-            }
-            Reading.StopReading();
+            LinesToRead.Reverse();
+            ToInterpret = LinesToRead.ToString();
+
+            Reading.ModuleZero();
+            
         }
 
     }
