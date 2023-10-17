@@ -1,24 +1,33 @@
 @page "/enquetes"
 
-<PageTitle>Enquetes - @tqnName</PageTitle>
+<PageTitle>Enquetes</PageTitle>
 <h3>Enquetes</h3>
-<div id="center" style="align-self:center;" hidden="@hideSetEnquetes"> 
-    <button hidden="@hideSetEnquetes" onclick="@setEnquete">Set</button>
+<div id="center" style="align-self:center;" hidden="@HideSetEnquetes"> 
+    <button hidden="@HideSetEnquetes" onclick="@SetEnquete">Set</button>
 </div>
-@foreach (token in ListTokens)
-{
-<div id="tqnshared" hidden="@token.ShowSetEnquetes">
-    <div id="title">@token.TokenName</div>
-    <div id="description">@token.Description</div>
-</div>
-<div id="tqndisp-one" hidden="@ifTokenOne">
+<div id="tqndisp-one" hidden="@IfTokenOne">
         <TokenOne></TokenOne>
 </div>
 <div>
-    <button onclick="@showSelector">Back</button>
+    <button onclick="@ShowSelector">Back</button>
 </div>
-}
+
 
 @code {
+    public static bool? HideSetEnquetes { get; set; }
+    public static bool? IfTokenOne { get; set; }
 
+    protected override void OnInitialized()
+    {
+        Title.PageName = "Enquêtes";
+    }
+    void SetEnquete()
+    {
+
+    }
+
+    void ShowSelector()
+    {
+        
+    }
 }
