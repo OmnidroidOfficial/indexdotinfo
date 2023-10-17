@@ -1,0 +1,33 @@
+@inherits LayoutComponentBase
+
+<PageTitle>indexdotinfo</PageTitle>
+<head>
+    <title>Regentesse.info</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="Keywords" content="keywords">
+    <meta name="Description" content="description">
+</head>
+<div class="content page">
+    <main>
+        <div class="title">
+            <h1 class="title">@Title.PageName</h1>
+        </div>
+        <div class="navigation">
+            <table>
+                <tr>
+                    <th class="navigation"><a class="navigation" href="" Match="All">Home</a></th>
+                    <th class="navigation"><a class="navigation" href="enquetes">Enquêtes</a></th>
+                    <th class="navigation"><a class="navigation" href="portfolios">Portfolios</a></th>
+                    <th class="navigation"><a class="navigation" href="notes">Notes</a></th>
+                </tr>
+            </table>
+        </div>
+        <article class="content">
+            @Body
+        </article>
+        <div class="footer">
+            <p>&copy; @Title.PageYear Regentesse.info - @Title.PageTime - @Title.PageDate - Privacy Statement</p>
+        </div>
+    </main>
+</div>
