@@ -2,18 +2,18 @@
 @using System.Text;
 
 <PageTitle>Index</PageTitle>
-<div id="index-home">
-<h1>Hello, world!</h1>
-
+<div class="index-home">
+<h1>@TitleDate</h1>
+<h2>@TitleTime</h2>
+<p>Chat instructions.</p>
 
 @Interpreter.Pending
-Welcome to your new app.
 </div>
 
-<div id="index-chat">
-    <div id="chat-box">
-        <div hidden="@showSuggestions" id="box-overlay"></div>
-        <p>@Reading.MessagesToRead @Session.Alerts @Chat.MsgCount</p>
+<div class="index-chat">
+    <div class="chat-box">
+        <div hidden="@showSuggestions" id="box-overlay"><p>suggestions</p></div>
+        <p>@Session.Alerts @Chat.MsgCount</p>
         @foreach (var message in SessionMessages)
         {
             <div id="chat-message" style="align-self:@message.txtAlignSelf; text-align:@message.txtAlign;">
@@ -23,15 +23,18 @@ Welcome to your new app.
             </div>
         }
     </div>
-    <div id="chat-input">
-        <input @bind="ChatInput" @bind:event="oninput"/>
-        <button onclick="@SndMessage">send</button>
+    <div class="chat-navigation">
+    <div class="chat-input">
+        <input @bind="ChatInput" @bind:event="oninput" disabled="@Chat.IsTyping" onkeyup="@SendReturn"/>
+        <button class="btn-primary" onclick="@SndMessage">send</button>
     </div>
-    <div id="chat-management">
-        <button hidden="@HideStart" onclick="@StartSession">Start Session</button>
-        <button hidden="@HideEnd" onclick="@EndSession">End Session</button>
-        <button onclick="@UpdateTxt">Direct Update</button>
-        <button onclick="@Suggestions">Chat Suggestions</button>
+    <div class="chat-management">
+        <button class="btn-primary" hidden="@HideStart" onclick="@StartSession">Start Session</button>
+        <button class="btn-primary" hidden="@HideEnd" onclick="@EndSession">End Session</button>
+        <button class="btn-primary" onclick="@UpdateTxt">Direct Update</button>
+        <button class="btn-primary" onclick="@Suggestions">Chat Suggestions</button>
+        <button class="btn-primary" onclick="@HideSuggestions">Hide Suggestions</button>
+    </div>
     </div>
 </div>
 
@@ -40,13 +43,28 @@ Welcome to your new app.
     public bool HideEnd { get; set; } = true;
     public bool showSuggestions { get; set; } = true;
     public string ChatInput { get; set; } = "";
+    public string TitleDate { get; set; } = DateTime.Now.ToString(format: "D");
+    public string TitleTime { get; set; } = DateTime.Now.ToString(format: "HH:mm (hh:mm tt)");
+
+    protected override void OnInitialized()
+    {
+        Title.PageName = "Regentesse.info";
+    }
+
+    private void SendReturn(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            SndMessage();
+        }
+    }
 
     public class Chat
     {
-        public static int MsgCount { get; set; } = SessionMessages.Count();
+        public static int MsgCount { get; set; } = 0;
         public static string MsgIncomingTxt { get; set; } = "";
         public static bool? MessagesIncoming { get; set; }
-
+        public static bool? IsTyping { get; set; }
         static public void NewMessage()
         {
             SessionMessages.Add(new Message(Session.NowTxtTime, "The Administrator", MsgIncomingTxt, "end", "right"));
@@ -55,14 +73,29 @@ Welcome to your new app.
 
         static public void ReadMessage()
         {
-            Reading.MessagesToRead = SessionMessages.GetRange(Reading.Bookmark, Reading.CountMessagesToRead).ToArray();
+            Reading.MessagesToRead = SessionMessages.GetRange(Reading.Bookmark, Reading.CountMessagesToRead);
         }
 
         static public void CountMessages()
         {
             MsgCount = SessionMessages.Count();
         }
+
+        static public void Typing()
+        {
+            if (MessagesIncoming == true)
+            {
+                IsTyping = true;
+                Interpreter.Pending = "The Administrator is typing...";
+            }
+            if (MessagesIncoming == false)
+            {
+                IsTyping = false;
+            }
+        }
     }
+
+
 
     public class Message
     {
@@ -91,7 +124,7 @@ Welcome to your new app.
             SessionMessages.Add(new Message(Session.NowTxtTime, "Guest", ChatInput, "start", "left"));
             Chat.MessagesIncoming = false;
             Interpreter.MessagesSent++;
-            Chat.MsgCount = SessionMessages.Count();
+          //  Chat.MsgCount = SessionMessages.Count();
             Interpreter.NewInterpretation();
             ChatInput = "";
         }
@@ -135,6 +168,11 @@ Welcome to your new app.
     void Suggestions()
     {
         showSuggestions = false;
+    }
+
+    void HideSuggestions()
+    {
+        showSuggestions = true;
     }
 
     void CurrentQuestion()
