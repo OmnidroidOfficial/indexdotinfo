@@ -10,7 +10,6 @@ namespace indexdotinfo
         public static int? TotalMessages { get; set; }
         public static StreamWriter? StreamWriter { get; set; }
         public static string? Output { get; set; }
-        public static int? AskConfirm { get; set; }
         public static InputText? MsgOutgoing { get; set; }
         public static InputText? MsgIncoming { get; set; }
         public StreamReader? ReadStream { get; set; }
@@ -26,7 +25,7 @@ namespace indexdotinfo
             public string? StreamLine { get; set; }
         }
 
-        public static List<OutputStreamLine> AgrOutput = new List<OutputStreamLine>() { };
+        public static List<OutputStreamLine>? AgrOutput = new List<OutputStreamLine>() { };
 
         static public void NewOutputBuilder()
         {
@@ -35,7 +34,7 @@ namespace indexdotinfo
 
         static public void NewOutput()
         {
-            AgrOutput.Clear();
+            AgrOutput!.Clear();
             
             if (Reading.ChtState == 1)
             {
@@ -50,9 +49,17 @@ namespace indexdotinfo
                 ConfirmationalOutput();
             }
 
-            Chat.ReadMessage();
+       //     Chat.ReadMessage();
             TotalMessages = Interpreter.MessagesReceived + Interpreter.MessagesSent;
             Attempts++;
+            CustomOutput();
+        }
+
+        static public void CustomOutput()
+        {
+            AgrOutput!.Add(new OutputStreamLine("Simple, advanced or custom?"));
+            AgrOutput!.Add(new OutputStreamLine(Reading.ChtX + Reading.ChtY + Reading.ChtZ));
+            SubmitOutput();
         }
 
         static public void IntroductoryOutput()
@@ -72,14 +79,20 @@ namespace indexdotinfo
 
         static public void SubmitOutput()
         {
-            System.Collections.IList OutputStreamLines = AgrOutput;
-                for (int i = 0; i < OutputStreamLines.Count; i++)
+                foreach (var LineOut in AgrOutput!)
                 {
-                    string StreamLine = (string)OutputStreamLines[i]!;
-                    Chat.MsgIncomingTxt = StreamLine;
+                    Output = LineOut.StreamLine!;
+                    Chat.MsgIncomingTxt = Output;
                     Chat.NewMessage();
                 }
-            
+            UpdateDirection();
+        }
+
+        static public void UpdateDirection()
+        {
+            Chat.MessagesIncoming = false;
+            Chat.Typing();
+            Reading.StopReading();
         }
 
         static public void OutputReview()
